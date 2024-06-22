@@ -14,3 +14,4 @@
 
 ## Решение
 
+[https://github.com/allseenn/js/tree/main/02.Tasks](https://github.com/allseenn/js/tree/main/02.Tasks)
