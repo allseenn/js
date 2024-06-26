@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // let age = +prompt("Ваш возраст: ", 30);
+        // if(age < 0)
+        //     console.log("Возраст не может быть отрицательным");
+        // else if(age === 1)
+        //     console.log(`Возраст пользователя ${age} год`);
+        // else if (2 <= age && age <= 4)
+        //     console.log("Возраст пользователя " + age + " года");
+        // else
+        //     console.log("возраст пользователя " + age);
+
+        // const firstName = prompt("Ваше имя: ", "Имя");
+        // console.log("Добро пожаловать на сайт " + firstName);
+        
+        //let age = AAA;
+
+        // let a = '2';
+        // let b = '3';
+
+        // console.log(+a + +b);
+
+        // let one = Number(prompt("Enter number one: "));
+        // let two = Number(prompt("Enter number two: "));
+        // if(two === 0 ) {
+        //     console.log("На ноль делить нельзя!");
+        //     exit(0);
+        // }
+        // else if(two == undefined|| one == undefined) {
+        //     console.log("Пустые поля");
+        //     exit(0);
+        // }
+
+        // let action = prompt("Enter action: ");
+        // if (action === "+") {
+        //     console.log(one + two);
+        // }
+        // else if (action === "-") {
+        //     console.log(one - two);
+        // }
+        // else if (action === "*") {
+        //     console.log(one * two);
+        // }
+        // else if (action === "/") {
+        //     console.log(one / two);
+        // }
+
+        let number = Number(prompt("Введите число: "));
+        if(number > 5) {
+            console.log("Число больше 5");
+        }
+        else if(number < 5) {
+            console.log("Число меньше 5");
+        }
+        else {
+            console.log("Число равно 5");
+        }
+
+        let test1 = Number(prompt("Введите test1: "));
+        let test2 = Number(prompt("Введите test2: "));
+        (test1 === test2)? console.log("равны") : console.log("не равны");
+        // if(test1 === test2) {
+        //     console.log("равны");
+        // }
+        // else {
+        //     console.log("не равны");
+        // }
+
+        let num1 = Number(prompt("Введите num1: "));
+        let num2 = Number(prompt("Введите num2: "));
+        //(num1 < num2)? console.log(`минимальное число ${num1}`) : console.log(`минимальное число ${num2}`);
+        
+        if (num1 < num2)
+            num2 = num1;
+        console.log(`минимальное число ${num2}`);
+
+        let num3 = Number(prompt("Введите num3: "));
+        (0<num3< 15)?console.log(`число ${num3} в диапазоне от 0 до 15`):console.log(`число ${num3} не входит в диапазон от 0 до 15`);
+
+    </script>
+</body>
+</html>
