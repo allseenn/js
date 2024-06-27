@@ -57,14 +57,11 @@
 function askQuestion(answer ,question) {
     let userAnswer = prompt(question);
     if (userAnswer.toLowerCase() === answer) 
-        alert('Правильно!');  
+        return true;  
     else 
-        alert('Неправильно!');
+        return false;
 }
 
-
-function puzzles() {
-    askQuestion('лук', 'Сидит дед, во 100 шуб одет, кто его раздевает, тот слезы приливает!');
-    askQuestion('елка', 'Зимой и летом одним цветом!');
+answer = askQuestion('лук', 'Сидит дед, во 100 шуб одет, кто его раздевает, тот слезы приливает!')
     
-}
+answer = askQuestion('елка', 'Зимой и летом одним цветом!')
