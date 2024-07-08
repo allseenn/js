@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+ <button class="btn">Buy the good</button>
+ <div class="content"></div>
+ <img src="photo.jpg" alt="photo" class="img">
+
+ <script>
+    const buttonEl = document.querySelector('.btn');
+    const contentEl = document.querySelector('.content');
+    const imgEl = document.querySelector('.img');
+    
+    imgEl.onclick = () => {
+        imgEl.src = 'newphoto.jpg';
+    }
+    const pEl = document.createElement('p');
+    pEl.textContent = 'Lorem ipsum dolor sit amet.';
+    buttonEl.onclick = () => {
+        buttonEl.textContent = 'Good in basket'
+        contentEl.appendChild(pEl)
+        };
+ </script>
+</body>
+</html>
