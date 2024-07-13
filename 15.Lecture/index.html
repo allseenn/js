@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul class="menu">
+        <li>item 1</li>
+        <li>item 2</li>
+        <li>item 3</li>
+    </ul>
+    <!-- <button class="button">Buy1</button>
+    <button class="button">Buy2</button>
+    <button class="button">Buy3</button> -->
+    <!-- <div onclick="console.log('hello click div');" class="div-button">Buy 2</div> -->
+    <script>
+        const menuEl = document.querySelector('.menu');
+        const nameFunc = (e) => {
+            console.log(e.target, e.currentTarget);
+        }
+
+        menuEl.addEventListener('click', nameFunc);
+        // const buttonEls = document.querySelectorAll('.button');
+
+        // buttonEls.forEach(element => {
+        //     element.addEventListener('click', function (e) {
+        //         console.log(e.target);
+        // })
+        // });
+
+
+        // let count = 0;
+        // buttonEl.onclick = () => {
+        //     console.log('hello click button js');
+        //     count++;
+        //     console.log(`you clicked ${count} times`);
+        // }
+
+        // buttonEl.addEventListener('click', function (e) {
+        //     console.log('hello click button event');
+        // });
+        // buttonEl.addEventListener('click', function (e) {
+        //     console.log('hello click button event2');
+        // });
+    </script>
+</body>
+</html>

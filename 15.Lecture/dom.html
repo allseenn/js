@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <h1>Lorem ipsum dolor sit amet.</h1> -->
+    <!-- <button class="button">buy</button> -->
+    <!-- <a href="yandex.ru" class="link">yandex</a> -->
+    <!-- <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum molestiae nam tenetur ipsum voluptate dolores. Labore culpa sint accusamus esse nesciunt nostrum, illum voluptates repudiandae ea eaque. Hic iure, quia sit repellat earum, aperiam est error incidunt exercitationem possimus corporis reiciendis molestiae, sunt velit a iste! Saepe atque dolor maxime.</p> -->
+    <!-- <input type="text"> -->
+    <form action="#">
+        <input type="text" class="input">
+        <div class="error"></div>
+        <button type="submit">GO</button>
+    </form>
+    <script>
+        const intputText = document.querySelector('.input');
+        const formRun = document.querySelector('form');
+        const error = document.querySelector('.error');
+        formRun.addEventListener('submit', function (e) {
+            if(intputText.value.trim() === '') {
+                e.preventDefault();
+                error.textContent = 'Вы не заполнили поле ввода';
+            }
+        })
+        // document.querySelector('input').addEventListener('input', function (e) {
+        //     console.log(e.target.value);
+        // })
+        // window.addEventListener('resize', function (e) {
+        //     console.log("resize window", e);
+        // })
+        // document.addEventListener('copy', function (e) {
+        //     const copyText = document.getSelection().toString();
+        //     console.log(copyText);
+        // })
+        // const link = document.querySelector('.link');
+        // link.addEventListener('click', function (e) {
+        //     e.preventDefault();
+        //     console.log('clicked');
+        // });
+        // window.addEventListener('load', function (e) {
+        //     console.log('everything is loaded')
+        // });
+        // document.addEventListener('DOMContentLoaded', function (e) {
+        //     console.log('loaded')
+        // });
+        // const buttonEl = document.querySelector('.button');
+        // buttonEl.addEventListener('mouseover', function (e) {
+        //     console.log("don't hover, press button");
+        // });
+        // buttonEl.addEventListener('mouseleave', function (e) {
+        //     console.log("don't leave me alone");
+        // });
+    </script>
+</body>
+</html>
