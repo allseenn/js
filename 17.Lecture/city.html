@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .select__error{
+            border: 1px solid red;
+        }
+    </style>
+</head>
+<body>
+    <form class="form" action="city.html">
+        <div>
+        <label for="select">Город</label>
+        <select class="select" name="select" id="select">
+            <option class="option" value="city">Choose your city</option>
+            <option class="option" value="Krasnodar">Краснодар</option>
+            <option class="option" value="Rostov">Ростов</option>
+            <option class="option" value="Stavropol">Ставрополь</option>
+            <option class="option" value="Sochi">Сочи</option>
+            <option class="option" value="Maykop">Майкоп</option>
+        </select>
+    </div>
+        </form>
+        <button type="submit" class="button">Submit</button>
+    </form>
+    <script>
+const form = document.querySelector('.form');
+const select = form.querySelector('.select');
+const button = form.querySelector('.button');
+document.addEventListener('click', function (e) {
+    console.log(select.value);
+    e.preventDefault();
+    if (select.value === 'city') {
+        select.classList.add('select__error');
+    } else {
+        select.classList.remove('select__error');
+        return
+    }
+});
+    </script>
+</body>
+</html>
