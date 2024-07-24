@@ -7,12 +7,16 @@
 </head>
 <body>
     <audio controls src="./01.mp3" preload="auto"></audio>
-    <!-- <script>
+    <script>
         const audioEl = document.querySelector('audio');
         audioEl.addEventListener('play', function (e) {
             console.log("audio play");
         });
-    </script> -->
+
+        audioEl.addEventListener('pause', function (e) {
+            console.log("audio pause");
+        })
+    </script>
 </body>
 </html>
 
