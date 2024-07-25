@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <audio controls src="./01.mp3" preload="auto"></audio>
+    <script>
+        const audioEl = document.querySelector('audio');
+        audioEl.addEventListener('play', function (e) {
+            console.log("audio play");
+        });
+
+        audioEl.addEventListener('pause', function (e) {
+            console.log("audio pause");
+        })
+    </script>
+</body>
+</html>
+
