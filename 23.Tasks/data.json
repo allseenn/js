@@ -1,0 +1,57 @@
+[
+    {
+        "id": 1,
+        "h3": "SKIRT ON HER BELLY",
+        "p": "Known for her sculptural takes on traditional skirt design, Australian arbiter of cool Kym Ellery teams up with Moda Operandi.",
+        "color": "Black",
+        "size": "M",
+        "count": 10,
+        "$": 51.00
+    },
+    {
+        "id": 2,
+        "h3": "BAG AT HIS BACK",
+        "p": "Known for his sculptural takes on traditional bag design, Australian arbiter of cool Kym Ellery teams up with Moda Operandi.",
+        "color": "Gray",
+        "size": "XL",
+        "count": 20,
+        "$": 52.00
+    },
+    {
+        "id": 3,
+        "h3": "HAT ON HIS HEAD",
+        "p": "Known for her sculptural takes on traditional hat design, Australian arbiter of cool Kym Ellery teams up with Moda Operandi.",
+        "color": "Blue",
+        "size": "X",
+        "count": 30,
+        "$": 53.00
+    },
+    {
+        "id": 4,
+        "h3": "BEARD ON HIS CHEEK",
+        "p": "Known for her sculptural takes on traditional beard design, Australian arbiter of cool Kym Ellery teams up with Moda Operandi.",
+        "color": "Black",
+        "size": "XXL",
+        "count": 40,
+        "$": 54.00
+    },
+    {
+        "id": 5,
+        "h3": "JACKET ON HER BODY",
+        "p": "Known for her sculptural takes on traditional jacket design, Australian arbiter of cool Kym Ellery teams up with Moda Operandi.",
+        "color": "Violet",
+        "size": "ML",
+        "count": 50,
+        "$": 55.00
+    },
+    {
+        "id": 6,
+        "h3": "SHIRT ON HER SHOULDERS",
+        "p": "Known for her sculptural takes on traditional SHIRT design, Australian arbiter of cool Kym Ellery teams up with Moda Operandi.",
+        "color": "Green",
+        "size": "S",
+        "count": 60,
+        "$": 56.00
+    }
+    
+]
