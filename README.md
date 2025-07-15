@@ -673,7 +673,63 @@ const sum = (a = 0, b = 0) =>
 2. Все переменные любых локальных областей видят глобальную область
 3. Переменные и объекты в локальной области видят все вложенные в нее области видимости
 
-Каждый раз при вызове любой функции создается структура данных похожих на объект - словарь:
+Каждый раз при вызове любой функции создается структура данных похожих на объект - **лексический контекст. Данная структура содержит все переменные функции и вне ее, к которым она будет обращаться:
+
+```js
+const lastName = "Petrov"
+// lexical env: { lastName: "Petrov" }
+function getFullName(firstName) {
+    // lexical env: { lastName: "Petrov", firstName: <будет определено в момент запуска функции> }
+    const fullName = firstName + " " + lastName;
+    // lexical env: { lastName: "Petrov", firstName: <будет определено в момент запуска функции>, fullName: <будет вычислено в момент запуска функции> }
+    return fullName;
+}
+
+getFullName("Ivan"); // "Ivan Petrov"
+// lexical env в момент вызова стал таким: { lastName: "Petrov", firstName: "Ivan", fullName: "Ivan Petrov" }
+```
+
+Когда функция определена но, не выполнена, в ее лексическом контексте нет многих переменных, но есть для них задел (ключи). В момент запуска функции пробелы заполняются значениями.
+
+#### Неправильное использование контекста
+
+```js
+const houses = [];
+
+let i = 0;
+while (i<10){
+    let house = function(){
+        console.log(i); // вывод номера дома по порядку
+    }
+    houses.push(house) 
+    i++;
+}
+
+houses[0](); // 10 
+houses[9](); // 10
+```
+
+Видим, что первый дом имеет номер 10 и последний тоже. Это потому-что лексический контекст общий у всех функций в массиве. Контекст содержит общую переменную i, которая к концу цикла выросла до 10. А т.к. вызов функций происходит мосле цикла, то они все видят десятку: `{ i: 10 }`
+
+Для исправления ситуации нужно номер дома (текущее значение i) сохранять внутри блока цикла:
+
+```js
+const houses = [];
+
+let i = 0;
+while (i<10){
+    let houseNumber = i
+    let house = function(){
+        console.log(houseNumber); // вывод номера дома по порядку
+    }
+    houses.push(house) 
+    i++;
+}
+
+console.log(houses[0]()); // 0
+```
+
+Или еще глубже, в теле функции.
 
 ### Замыкания
 
@@ -761,13 +817,20 @@ console.log(counter()); // 2
 
 Каждый раз при новом вызове любой функции создается лексическое окружение, котрое удаляется после выполенения функции. Т.к. часто для замыкания присваивают некой переменной функцию, в результате лексическое окружение остается в памяти, до завершения работы программы или до закрытия браузера, т.к. наличие ссылки (переменной) на функцию препятствует удалению лексического окружения и замкнутых в нем переменных. Поэтому болошое количество замыканий приводит к утечке памяти.
 
-### Рекурсивная функция
+### Рекурсия
 
 Функция которая сама себя вызывает называется **рекурсивная функция**
 
+Рекурсию применяют для воспроизведения повторяющихся действий:
+
+1. Для обхода вложенной структуры дерева каталога или документа (DOM)
+2. Для математических вычислений, которые поддаются разбиению типа:
+    **Сложное вычисление = простая операция, примененная к вычислению попроще**
+    $2^{10} = 2^9 \times 2 => b^{e} = b^{e-1} \times b$
+
 ```js
 function power(base, exponent){
-    if (exponent === 0) {
+    if (exponent === 0) { // Главное задавать условие выхода иначе будет бесконечная рекурсия
         return 1;
     } else {
         return base * power(base, exponent - 1);
@@ -777,6 +840,8 @@ console.log(power(2, 3)); // 8
 ```
 
 Данная реализации вычисления степени числа в три раза медленнее чем вариант с циклом.
+
+
 
 ### Именование функций
 
@@ -1377,7 +1442,186 @@ console.log(user?.['lastName']); // undefined
 
 Данный механизм позволяет избежать выброса исключения при обращении к несуществующему свойству.
 
-#### Методы объектов
+#### Пользовательские методы объекта
+
+Методы объекта это свойства которым присвоены функции.
+
+В объекте принято методе объявлять после свойств:
+
+```js
+// Объект робот-пылесос
+const Roomba = { // Есть негласное правило называть объекты в алгоритмах с большой буквы.
+    // Обычно сначала объявляют свойства объекта.
+    model: "Romba-1",
+    power: 200,
+    batterySize: 2100,
+    boxSize: 0.5,
+    workTime: 45,
+    counterOfStarts: 0,
+    isFull: false,
+    isObstacle: false,
+    isUVLampOn: false,
+    // После свойств объявляют его методы.
+    startCleaning: function () { // увеличивает счетчик стартов робота и выводит сообщение о старте
+        this.counterOfStarts++;
+        console.log('I am cleaning... I have been started: ', this.counterOfStarts, 'times.');
+    },
+    goCharge: function () { // отправка на зарядку
+        console.log('I am going to charge...');
+    },
+    switchUVLamp: function () { // вкл.выкл ультрафиолетовой лампы
+        this.isUVLampOn = !this.isUVLampOn;
+        console.log(`UV lamp is ${this.isUVLampOn ? 'working' : 'not working'}.`);
+    }
+};
+
+// Обращение к свойствам объекта.
+console.log(Roomba.model); // "Romba-1"
+console.log(Roomba.isFull); // false
+// Вызов методов объекта.
+Roomba.startCleaning(); // 'I am cleaning... I have been started: 1 times.'
+// Установим свойства объекта isUVLampOn в true, чтобы продемонстрировать результат работы метода switchUVLamp.
+Roomba.switchUVLamp(); // 'UV lamp is working.'
+Roomba.goCharge(); // 'I am going to charge...'
+```
+
+Методы могут обращаться к свойствам объекта с помощью ключевого слова **this**
+
+#### this
+
+Ключевое слово this означает текущий объект, оно также доступно в любой функции:
+
+```js
+// Работа с this
+const checkThis = function() {
+    console.log(this);
+}
+checkThis(); // Window {0: global, window: Window, self: Window, document: document, name: "", location: Location, ...}
+```
+
+Из лексического контекста данной фукнции видно, что this (текущий объект) ссылается на глобальный объект window, в случае браузера или global в node.js
+
+Внутри методов объекта this указывает на сам объект, в котором он был объявлен:
+
+```js
+const checkThisInObject = {
+    testProperty: true,
+    checkThis: function () {
+        console.log(this);
+    },
+};
+checkThisInObject.checkThis(); // {testProperty: true, checkThis: ƒ}
+```
+
+Контекст не указывает никаких глобальных объектов, следовательно this - это сам объект, но есть нюансы.
+
+#### Одалживание методов
+
+Создадим улучшенного робота-пылесоса, на основе первого:
+
+```js
+// Объект робот-пылесос модель Tango.
+const Tango = { 
+    model: "Tango-1",
+    power: 300,
+    batterySize: 3200,
+    boxSize: 0.7,
+    workTime: 60,
+    counterOfStarts: 0,
+    isFull: false,
+    isObstacle: false,
+    isUVLampOn: false,
+    // После свойств объявляют его методы. А так как методы у новой модели такие же как и у старой, давайте позаимствуем их у объекта Roomba.
+    startCleaning: Roomba.startCleaning,
+    goCharge: Roomba.goCharge,
+    switchUVLamp: Roomba.switchUVLamp,
+};
+
+console.log(Tango.model); // "Tango-1"
+console.log(Tango.isFull); // false
+// Вызов методов объекта.
+Tango.startCleaning(); // 'I am cleaning... I have been started: 1 times.'
+// Результат вызова следующего метода зависит от значения, хранящегося в свойстве объекта, а также от того как этот метод был вызван (об этом поговорим чуть ниже).
+Tango.switchUVLamp(); // 'UV lamp working.'
+Tango.goCharge(); // 'I am going to charge...'
+```
+
+Создадим третьего робота, но объекты экспортируем с помощью внешних способов:
+
+```js
+const Samba = {
+    model: "Samba-1",
+    power: 250,
+    batterySize: 2500,
+    boxSize: 0.5,
+    workTime: 50,
+    counterOfStarts: 0,
+    isFull: false,
+    isObstacle: false,
+    isUVLampOn: false,
+    // На этот раз мы не будем создавать методы в объекте, мы постараемся их заимствовать непосредственно перед использованием.
+};
+
+// Одолжим методы из объекта Roomba.
+Samba.startCleaning = Roomba.startCleaning;
+Samba.switchUVLamp = Roomba.switchUVLamp;
+Samba.goCharge = Roomba.goCharge;
+Samba.startCleaning(); // 'I am cleaning... I have been started: 1 times.'
+// Результат вызова следующего метода зависит от значения, хранящегося в свойстве объекта, а также от того как этот метод был вызван (об этом поговорим чуть ниже).
+Samba.switchUVLamp(); // 'UV lamp is working.'
+Samba.goCharge(); // 'I am going to charge...'
+```
+
+Лампа работает по принципу одной кнопки (вкл/выкл). Сейчас лампа включена
+Предположим мы хотим включить лампу по расписанию через пять секунд:
+
+```js
+setTimeout(Samba.switchUVLamp, 5000); // 'UV lamp is working.'
+```
+
+Но, лампа не выключается. Потому что через 5 секунд объкта Samba уже нет и внутренняя this ссылается несуществующий объект, т.е. undefined.
+
+Можно обернуть метод в анонимную функцию, тогда ссылка на Samba сохраниться в лексическом контексте функции и объект не будет удален:
+
+```js
+setTimeout(function() {
+    Samba.switchUVLamp();
+}, 5000); // 'UV lamp in not working.'
+```
+
+Можно вместо анонимной функции использовать методы call, apply или bind
+
+#### Встроенные методы объектов
+
+### call
+
+Метод call позволяет вызвать метод в контексте другого объекта, на примере объекта Roomba:
+
+```js
+const notARobot = {
+    counterOfStarts: 10,
+}
+
+Roomba.startCleaning.call(Roomba); // 'I am cleaning... I have been started: 1 times.'
+Roomba.startCleaning.call(notARobot); // 'I am cleaning... I have been started: 10 times.'
+```
+В последнем вызове метода мы передали с помощью call контекст другого объекта и он выполнился со своим свойством counterOfStarts равным 10. Если в качестве второго и последующих аргументов call что-то передать, то данные параметры пойдут в вызываемый метод
+
+### apply
+
+Аналогичен методу call, только второй параметр передается в виде массива:
+
+```js
+Roomba.startCleaning.apply(Roomba, [1, 2, 3]); // 'I am cleaning... I have been started: 10 times.'
+```
+
+### bind
+
+Позволяет привязать контекст к фукнции (методу) навсегда:
+
+```js
+Samba.startCleaning = Roomba.startCleaning.bind(Samba);
+```
 
 Методы можно добавить в объект, путем присвоения функции как значения свойства:
 
@@ -1393,10 +1637,6 @@ const user = {
 
 user.startEngine(); // Engine is started
 ```
-
-#### this
-
-Ключевое слово this означает текущий объект
 
 #### for in
 
@@ -1428,7 +1668,7 @@ const user = {
     age: 30
 };
 
-const array = Object.keys(user)); // ["name", "age"]
+const array = Object.keys(user); // ["name", "age"]
 ```
 
 #### Object.values
