@@ -1444,9 +1444,23 @@ console.log(user?.['lastName']); // undefined
 
 #### Пользовательские методы объекта
 
-Методы объекта это свойства которым присвоены функции.
+Методы объекта это свойства которым присвоены функции:
 
-В объекте принято методе объявлять после свойств:
+```js
+function speak(line){
+    console.log(`The ${this.type} rabbit says: ${line}`);
+}
+
+let whitRabbit = {type: "white", speak};
+let hungryRabbit = {type: "hungry", speak};
+
+whiteRabbit.speak("oh my fur and whiskers")
+// The white rabbit says: oh my fur and whiskers
+hungryRabbit.speak("got any carrots?");
+// The hungry rabbit says: got any carrots?
+```
+
+В объекте принято методы объявлять после свойств:
 
 ```js
 // Объект робот-пылесос
@@ -1623,7 +1637,7 @@ Roomba.startCleaning.apply(Roomba, [1, 2, 3]); // 'I am cleaning... I have been 
 Samba.startCleaning = Roomba.startCleaning.bind(Samba);
 ```
 
-Методы можно добавить в объект, путем присвоения функции как значения свойства:
+Методы можно добавить в объект, путем присвоения функции как значения свойства с ключевым словом function:
 
 ```js
 const user = {
@@ -1637,6 +1651,45 @@ const user = {
 
 user.startEngine(); // Engine is started
 ```
+
+Если использовать стрелочную функции внутри объекта, то они не будут видеть объекта, т.к. стрелочные функции не имеют собственного контекста поэтому берется объект на уровень выше, т.е. global. Тут не помогут даже call, apply и bind.
+
+Но, стрелочные функции очень полезны как анонимные внутри самого метода объекта:
+
+```js
+const Stand = {
+    model: "Stand-1",
+    robots: ['Roomba-1', 'Tango-1', 'Samba-1', 'Roomba-2'],
+    // Метод, с использованием стрелочной функции в качестве функции обратного вызова.
+    startTestingArrow: function() {
+        console.log('Start testing...');
+        this.robots.forEach((value) => {
+            console.log('stand: ', this.model, 'is testing robot: ', value);
+        })
+    },
+    // Метод, с использованием классической функции в качестве функции обратного вызова.
+    startTestingClassic: function() {
+        console.log('Start testing...');
+        this.robots.forEach(function(value) {
+            console.log('stand: ', this.model, 'is testing robot: ', value);
+        })
+    },
+};
+Stand.startTestingArrow();
+// Start testing...
+// stand: Stand-1 is testing robot: Roomba-1
+// stand: Stand-1 is testing robot: Tango-1
+// stand: Stand-1 is testing robot: Samba-1
+// stand: Stand-1 is testing robot: Roomba-2
+Stand.startTestingClassic();
+// Start testing...
+// stand: undefined is testing robot: Roomba-1
+// stand: undefined is testing robot: Tango-1
+// stand: undefined is testing robot: Samba-1
+// stand: undefined is testing robot: Roomba-2
+```
+
+Получили двойную вложенность в двух методах: startTestingArrow() и startTestingClassic(). Первый метод со стрелочной функцией внутри отработал, т.к. стрелочная функция не имея собственного this ссылается через уровень к свойству model и отрабатывает хорошо. Вот второй метод не отрабатывает как надо, потому что внутри классического метода, классическая функция видит свой контекст и this в нем не видит свойства model в результате возвращается undefined.
 
 #### for in
 
@@ -2166,7 +2219,9 @@ console.log(userCity); // New York
 
 #### JSON
 
-Формат очень похож на объекты JS, но имена свойств (ключи) обрамлены двойными кавычками:
+Java Script Object Notation
+
+Формат очень похож на объекты JS, но имена свойств (ключи) обрамлены двойными кавычками, в нем не функций, не должно быть комментариев, в конце группы ключей не ставят запятые:
 
 ```json
 {
@@ -2177,13 +2232,19 @@ console.log(userCity); // New York
 
 ##### JSON.stringify
 
-Для конвертации объекта JS в JSON:
+Для конвертации объекта JS в строкове представление JSON:
 
 ```js
 const person = { name: 'John', age: 30 };
 const json = JSON.stringify(person);
 console.log(json); // {"name":"John","age":30}
 ```
+
+Метод принимает 3 аргумента:
+
+1. Объект, который нужно конвертировать в JSON (обязательный)
+2. Функция-преобразователь, применится ко всем элементам(необязательный)
+3. Количество пробелов, которое будет в качестве отступов в JSON (необязательный)
 
 ##### JSON.parse
 
@@ -2281,4 +2342,705 @@ const addPropToObj(object, key, value){
 }
 ```
 
-Нечистые функции используещие **побочне эффекты** - получение данных по сети или из БД, тоже нужны и без них нельзя. Но, нужно стараться по максимуму использвать чистые, а обращения по сети и к БД выносить в грязные функции.
+Нечистые функции использующие **побочные эффекты** - получение данных по сети или из БД, тоже нужны и без них нельзя. Но, нужно стараться по максимуму использовать чистые, а обращения по сети и к БД выносить в грязные функции.
+
+## 02.Lecture
+
+### class
+
+Появился в ES2015.
+
+Объекты можно создавать через ключевое слово class:
+
+```js
+// Класс робот-пылесос.
+class RobotVacuumCleaner {
+    // Свойства класса.
+    model = "Romba-1";
+    power = 200;
+    batterySize = 2100;
+    boxSize = 0.5;
+    workTime = 45;
+    counterOfStarts = 0;
+    isFull = false;
+    isObstacle = false;
+    isUVLampOn = false;
+    // Конструктор класса
+    constructor() {
+    }
+    // Методы класса.
+    startCleaning() {
+        this.counterOfStarts++;
+        console.log('I am cleaning... I have been started: ',
+        this.counterOfStarts, 'times.');
+    }
+    goCharge() {
+        console.log('I am going to charge...');
+    }
+    switchUVLamp() {
+        this.isUVLampOn = !this.isUVLampOn;
+        console.log(`UV lamp is ${this.isUVLampOn ? 'working' : 'not working'}.`);
+    }
+}
+
+const Roomba = new RobotVacuumCleaner();
+Roomba.isUVLampOn = true;
+setTimeOut(Roomba.switchUVLamp, 5000);
+```
+
+Все схоже с объектом, только добавился конструктор, свойства внутри присваиваются через равно и методы объявляются по другому. Но, ультрафиолетовая лампа не выключается, т.к. setTimOut запускает выключатель лампы через 5 секунд когда контекст методов класса исчезает и this начинает ссылаться на глобальный объект.
+
+#### bind()
+
+Используя стандартный метод объектов bind можно сохранить контекст.
+
+```js
+// Класс робот-пылесос.
+class RobotVacuumCleaner {
+    // Свойства класса.
+    model = "Romba-1";
+    power = 200;
+    batterySize = 2100;
+    boxSize = 0.5;
+    workTime = 45;
+    counterOfStarts = 0;
+    isFull = false;
+    isObstacle = false;
+    isUVLampOn = false;
+    // Используем его, чтобы привязать все методы класса к контексту - текущему объекту (this).
+    constructor() {
+        this.startCleaning = this.startCleaning.bind(this);
+        this.goCharge = this.goCharge.bind(this);
+        this.switchUVLamp = this.switchUVLamp.bind(this);
+    }
+    // Методы класса.
+    startCleaning() {
+        this.counterOfStarts++;
+        console.log('I am cleaning... I have been started: ',
+        this.counterOfStarts, 'times.');
+    }
+    goCharge() {
+        console.log('I am going to charge...');
+    }
+    switchUVLamp() {
+        this.isUVLampOn = !this.isUVLampOn;
+        console.log(`UV lamp is ${this.isUVLampOn ? 'working' : 'not working'}.`);
+    }
+}
+// Создадим экземпляр класса.
+const Roomba = new RobotVacuumCleaner();
+Roomba.isUVLampOn = true;
+setTimeout(Roomba.switchUVLamp, 2000); // UV lamp is not working.
+```
+
+Можно еще проще. В случае с классом хорошо работают стрелочные методы, которые не имеют своего контекста, и которые по умолчанию ссылаются через уровень к глобальному для них объекту, т.е. в наше случае к своему классу:
+
+```js
+// Класс робот-пылесос.
+class RobotVacuumCleaner {
+    // Свойства класса.
+    model = "Romba-1";
+    power = 200;
+    batterySize = 2100;
+    boxSize = 0.5;
+    workTime = 45;
+    counterOfStarts = 0;
+    isFull = false;
+    isObstacle = false;
+    isUVLampOn = false;
+    // Конструктор класса, мы изучим его подробнее на следующем уроке.
+    constructor() {
+    }
+    // Методы класса.
+    startCleaning = () => {
+        this.counterOfStarts++;
+        console.log('I am cleaning... I have been started: ',
+        this.counterOfStarts, 'times.');
+    }
+    goCharge = () => {
+        console.log('I am going to charge...');
+    }
+    switchUVLamp = () => {
+        this.isUVLampOn = !this.isUVLampOn;
+        console.log(`UV lamp is ${this.isUVLampOn ? 'working' : 'not working'}.`);
+    }
+}
+// Создадим экземпляр класса.
+const Roomba = new RobotVacuumCleaner();
+Roomba.isUVLampOn = true;
+setTimeout(Roomba.switchUVLamp, 2000); // UV lamp is not working.
+```
+
+Тут не нужно даже инициализировать конструктор, методы отрабатывают хорошо, с привязкой к контексту нашего класса.
+
+## 03.Lecture
+
+### __proto__
+
+Указывает на какой объект родитель ссылаться, если свойство __proto__ не задано, то оно по умолчанию ссылается на Object.
+
+Зададим родителя:
+
+```js
+// Объект робот-пылесос.
+const VacuumCleaner = {
+    Model: "vacuum cleaner",
+    counterOfStarts: 0,
+    isFull: false,
+    isObstacle: false,
+    startCleaning: function () {
+        this.counterOfStarts++;
+        // Добавим дополнительный вывод, чтобы знать чей метод мы вызвали.
+        console.log('I am the method of VacuumCleaner');
+        console.log('I am cleaning... I have been started: ', this.counterOfStarts, 'times.');},
+        goCharge: function () {
+        // Добавим дополнительный вывод, чтобы знать чей метод мы вызвали.
+        console.log('I am the method of VacuumCleaner');
+        console.log('I am going to charge...');
+    }
+};
+```
+
+Зададим серию наследников:
+
+```js
+// Объект робот-пылесос.
+const DancingSeries = {
+    // Объявляем новые свойства и переопределить свойство model.
+    model: "dancing series",
+    power: 200,
+    batterySize: 2100,
+    boxSize: 0.5,
+    workTime: 45,
+    isUVLampOn: false,
+    // Добавляем новый метод.
+    switchUVLamp: function () {
+        // Добавим дополнительный вывод, чтобы знать чей метод мы вызвали.
+        console.log('I am the method of DancingSeries');
+        this.isUVLampOn = !this.isUVLampOn;
+        console.log(`UV lamp is ${this.isUVLampOn ? 'working' : 'not working'}.`);
+    },
+    // Делаем ссылку на прототип от родителя.
+    __proto__: VacuumCleaner,
+};
+```
+
+Зададим наследника серии:
+
+```js
+// Объект робот-пылесос.
+const Samba = {
+    // Обновляем свойства под конкретную модель.
+    model: "Samba-1",
+    power: 250,
+    batterySize: 2500,
+    workTime: 50,
+    // Делаем ссылку на прототип от родителя.
+    __proto__: DancingSeries,
+};
+```
+
+Обратимся к свойствам и методам родителя через серию:
+
+```js
+// Обращение к свойствам объекта.
+console.log(Samba.model); // "Samba-1"
+console.log(Samba.isFull); // false
+// Вызов методов объекта.
+Samba.startCleaning();
+// I am the method of VacuumCleaner
+// 'I am cleaning... I have been started: 1 times.'
+Samba.isUVLampOn = true;
+Samba.switchUVLamp();
+// I am the method of DancingSeries
+// 'UV lamp is not working.'
+Samba.goCharge();
+// I am the method of VacuumCleaner
+// 'I am going to charge...'
+```
+
+Механизм прототипов позволяет использовать методы объекта Array в пользовательских массивах, который в свою очередь через свое __proto__ ссылкается на Object.
+
+Создадим еще одного конечного наследника и переобределим в нем метод startCleaning(), которые есть в родителе:
+
+```js
+// Объект робот-пылесос.
+const Djaiv = {
+    // Обновляем свойства под конкретную модель.
+    model: "Djaiv-1",
+    power: 250,
+    batterySize: 2500,
+    workTime: 50,
+    // Переопределим метод startCleaning.
+    startCleaning: function () {
+        this.counterOfStarts++;
+        // Добавим дополнительный вывод, чтобы знать чей метод мы вызвали.
+        console.log('I am the method of Djaiv');
+        console.log('I am Djaiv, and I am cleaning... I have been started: ', this.counterOfStarts, 'times.');
+    },
+    // Делаем ссылку на прототип от родителя.
+    __proto__: DancingSeries,
+};
+
+Samba.startCleaning();
+// I am the method of VacuumCleaner
+// 'I am cleaning... I have been started: 1 times.'
+Djaiv.startCleaning();
+// I am the method of Djaiv
+// I am Djaiv, and I am cleaning... I have been started: 1 times.
+```
+
+startCleaning() для Djaiv является переопределенным, но у родителя и наследников остался прежним.
+
+Для работы с прототипами можно использовать 2 метода: getPrototypeOf и setProrotypeOf.
+
+#### getPrototypeOf
+
+Позволяет получить ссылки на прототип объекта по цепочке:
+
+```js
+// Получим прототип для объекта Djaiv.
+const DjaivProto = Object.getPrototypeOf(Djaiv);
+console.log(DjaivProto.model); // dancing series
+const DjaivProtoProto = Object.getPrototypeOf(DjaivProto);
+console.log(DjaivProtoProto.model); //vacuum cleaner
+const DjaivProtoProtoProto =
+Object.getPrototypeOf(DjaivProtoProto);
+console.log(DjaivProtoProtoProto); // [object Object]
+```
+
+Object не имеет прототипов, т.к. является самым первым, поэтому он вернет null.
+
+#### setPrototypeOf
+
+Зададим новоую серию наследников musicSeries:
+
+```js
+// Объект робот-пылесос.
+const MusicSeries = {
+    // Объявляем новые свойства и переопределяем свойство model.
+    model: "music series",
+    power: 200,
+    batterySize: 2100,
+    boxSize: 0.5,
+    workTime: 45,
+    // Добавляем новый метод.
+    startWipe: function () {
+    // Добавим дополнительный вывод, чтобы знать чей метод мы вызвали.
+        console.log('I am the method of MusicSeries');
+        console.log('I am starting to wipe the floor...');
+    },
+    // Делаем ссылку на прототип от родителя.
+    __proto__: VacuumCleaner,
+};
+```
+
+Создадим конечного наследника и используем setPrototypeOf с двумя параметрами - объект наследник, объект родитель:
+
+```js
+// Объект робот-пылесос.
+const Blues = {
+    // Обновляем свойства под конкретную модель.
+    model: "Bluees-1",
+    power: 250,
+    batterySize: 2500,
+    workTime: 50,
+};
+// Установим прототип для робота.
+Object.setPrototypeOf(Blues, MusicSeries);
+
+console.log(Object.getPrototypeOf(Djaiv).model) // dancing series
+console.log(Object.getPrototypeOf(Blues).model) // music series
+
+Djaiv.startWipe(); // Uncaught TypeError: Djaiv.startWipe is not a function
+```
+
+### Конструктор объекта
+
+Конструктор объекта - вызываемая с помощью оператора new функция, которая создает объект и проводит инициализацию.
+Функцию конструктор объекта принято называть с большой буквы, внутри нее свойства и методы объявляют с помощью this
+Создадим конечного наследника от первой серии:
+
+```js
+// Конструктор объекта робот-пылесос.
+function Samba(serailNumber) {
+    // Создаем свойства объекта, используя this.
+    this.serialNumber = serailNumber;
+    this.model = "Samba-1";
+    this.power = 250;
+    this.batterySize = 2500;
+    this.workTime = 50;
+    // Делаем ссылку на прототип от родителя.
+    this.__proto__ = DancingSeries;
+}
+// Создадим экземпляр нового объекта.
+const Samba1 = new Samba(1014778);
+console.log(Samba1.serialNumber); // 1014778
+console.log(Samba1.startCleaning()); // I am the method of VacuumCleaner
+// I am cleaning... I have been started: 1 times.
+```
+
+Похоже на описание обычного объекта, только через ключевое слово this и с использовнием оператора new при инициализации.
+Это ускоряет процесс создания множества однотипных объектов с помощью конструктора:
+
+```js
+// Создадим 10 роботов пылесосов Samba, как на конвейере. 
+// const robots = [];
+for (let index = 0; index < 10; index++) {
+    // Создадим экземпляр нового объекта и добавляем его в массив наших роботов, каждый с уникальным серийным номером.
+    robots.push(new Samba(index));
+}
+console.log(robots[3].serialNumber); // 3
+console.log(robots[7].serialNumber); // 7
+```
+
+В примере с конструкоторм мы указали родителя с помощью this.__proto__, а можно с помощью свойства prototype:
+
+```js
+function Samba(serailNumber) {
+    this.serialNumber = serailNumber;
+    this.model = "Samba-1";
+    this.power = 250;
+    this.batterySize = 2500;
+    this.workTime = 50;
+}
+// Делаем ссылку на прототип от родителя.
+Samba.prototype = DancingSeries;
+const Samba1 = new Samba(1014778);
+console.log(Samba1.serialNumber); // 1014778
+console.log(Samba1.startCleaning()); // I am the method of VacuumCleaner
+// I am cleaning... I have been started: 1 times.
+
+console.log(Samba1.__proto__); // {model: "dancing series", power: 200, batterySize: 2100, boxSize: 0.5, workTime: 45, ...}
+console.log(Samba1.prototype); // undefined
+console.log(Samba1.__proto__ === Samba.prototype); // true
+```
+
+Свойства __proto__ есть у каждого объекта, оно позволяет найти родителя. Свойство же prototype есть только у функций-конструкторов, оно выполняет служебную роль при создании объекта и с помощью оператор new.
+
+### new
+
+Оператор new позволяет правильно вызвать конструктор, которая как функция ничего не возвращает и создать объект, по алгоритму:
+
+1. Создаем пустой объект.
+2. Задает ссылку для this на созданый объект
+3. Вызывает функцию конструктор.
+4. Если у функции конструктора есть свойство prototype, то устанавливает его значения для свойства объекта __proto__
+5. Устанавливает свойство constructor ссылкой на конструктор
+6. Возвращает созданный объект, т.е. фукнция конструктор ничего не возвращает
+
+Самописный оператор new в виде фукнции:
+
+```js
+function createObject(constructor) {
+    // Создаем новый объект.
+    const obj = {};
+    // Установим новому объекту прототипом прототип функции-конструктора
+    Object.setPrototypeOf(obj, constructor.prototype);
+    // Вызовем функцию-конструктор, передав ей как this созданный на шаге 1 объект, и передадим остальные аргументы, если они были переданы в createObject
+    const argsArray = Array.prototype.slice.apply(arguments);
+    const result = constructor.apply(obj, argsArray.slice(1));
+    // Вернем новый объект, если конструктор вернул примитивное значение или undefined, иначе вернем то, что вернул конструктор.
+    if (!result || typeof result === 'string' || typeof result === 'number' || typeof result === 'boolean') {
+        return obj
+    } else {
+        return result;
+    }
+}
+// Создадим экземпляр нового объекта.
+const Samba1 = createObject(Samba, 1014778);
+// Проверим установку свойств в конструкторе.
+console.log(Samba1.serialNumber); // 1014778
+// Проверим, что прототип установился корректно, и мы можем вызывать методы из родительских объектов.
+console.log(Samba1.__proto__); // {model: "dancing series", power: 200, batterySize: 2100, boxSize: 0.5, workTime: 45, ...}
+console.log(Samba1.startCleaning()); // I am the method of VacuumCleaner
+// I am cleaning... I have been started: 1 times.
+// Проверим присвоение конструктора.
+console.log(Samba1.constructor); // function Object() { [native code] }
+```
+
+### Object.create
+
+Метод позволяет также создавать новые объекты как и способы ранее. Аргументами принимает прототип и свойства нового объекта в формате словаря с ключами. Данный метод хорош тем, что в качестве первого аргумента может принимать null, тогда создаваемые объекты не будут привязаны к Object и не будут наследовать его методы такие как toString(), valueOf() и т.д. Иногда нужно создать объект без единого свойства и метода:
+
+```js
+const Samba1 = new Samba(101);
+console.log(Samba1.toString()); // [object Object]
+
+const Samba1 = Object.create(null);
+console.log(Samba1.toString); // undefined
+console.log(Samba1.__proto__); // undefined
+```
+
+Но, есть более удобные механизмы создания объектов и насследования, которые появились с приходом ES2015
+
+### class extends
+
+Заменим предыдущий код современным способом, создадим родителя:
+
+```js
+// Класс робот-пылесос.
+class VacuumCleaner {
+    model = "vacuum cleaner";
+    counterOfStarts = 0;
+    isFull = false;
+    isObstacle = false;
+    // Для создания конструктора, нужно создать метод constructor.
+    constructor() {
+    }
+    startCleaning() {
+        this.counterOfStarts++;
+        // Добавим дополнительный вывод, чтобы знать чей метод мы вызвали.
+        console.log('I am the method of VacuumCleaner');
+        console.log('I am cleaning... I have been started: ', this.counterOfStarts, 'times.');
+    }
+    goCharge() {
+        // Добавим дополнительный вывод, чтобы знать чей метод мы вызвали.
+        console.log('I am the method of VacuumCleaner');
+        console.log('I am going to charge...');
+    }
+}
+// Попробуем создать экземпляр класса и посмотреть как онработает.
+const BaseRobot = new VacuumCleaner;
+console.log(BaseRobot.constructor); // class VacuumCleaner {
+// model = "vacuum cleaner";
+// counterOfStarts = 0;
+// isFull = false;
+// isObstacle = false;
+// Для создания конструктора, нужно создать метод constructor.
+// constructor() {
+// }
+// ...
+console.log(BaseRobot.model); // vacuum cleaner
+console.log(BaseRobot.startCleaning()); // I am the method of VacuumCleaner
+// I am cleaning... I have been started: 1 times.
+```
+
+Cоздадим расширенную новым методом серию:
+
+```js
+// Расширенный класс DancingSeries. C помощью extends мы указываем от какого класса будем наследоваться.
+class DancingSeries extends VacuumCleaner {
+    // Объявляем новые свойства и переопределяем свойство model.
+    model = "dancing series";
+    power = 200;
+    batterySize = 2100;
+    boxSize = 0.5;
+    workTime = 45,
+    isUVLampOn = false;
+    // Добавляем новый метод.
+    switchUVLamp() {
+        // Добавим дополнительный вывод, чтобы знать чей метод мы вызвали.
+        console.log('I am the method of DancingSeries');
+        this.isUVLampOn = !this.isUVLampOn;
+        console.log(`UV lamp is ${this.isUVLampOn ? 'working' : 'not working'}.`);
+    }
+};
+
+// Создадим новый экземпляр класса, чтобы посмотреть как он работает и что в нем есть.
+const DancingRobot = new DancingSeries;
+console.log(DancingRobot.__proto__); // VacuumCleaner
+{constructor: ƒ, switchUVLamp: ƒ}
+console.log(DancingRobot.model); // dancing series
+console.log(DancingRobot.switchUVLamp()); // I am the method of DancingSeries
+// lamp is working.
+```
+
+Под капотом все ранее описанные действия. Объявляя класс движок JS:
+
+- создает функцию конструктор по имени класса
+- берет для конструктора код из метода constructor, если метода нет то конструктор тоже будет пустым. 
+- Если есть расширение, то в конструкторе будет служебное свойство prototype
+- прописывает все методы в свойство prototype конструктора
+
+```js
+// Созданный конструктор является функцией, код которой взят из конструктора.
+console.log(DancingSeries === DancingSeries.prototype.constructor); // true
+// В созданном конструкторе есть свойство prototype и оно содержит все методы.
+console.log(DancingSeries.prototype); // VacuumCleaner {constructor: ƒ, switchUVLamp: ƒ}
+```
+
+### 04.Lecture
+
+#### Async
+
+Асинхронный код состоит из двух частей:
+
+- долгая часть (требует большего времени выполнения)
+- callback - вызывается по завершению долгого кода, может сообщать о его завершении
+
+**Цикл Событий** (Event Loop) - механизм, который помещает долгую часть в очередь отложенных задач и следит за ними.
+
+#### Event Loop
+
+Сам цикл событий состоит из трех частей:
+
+1. Call Stack - **стек вызовов** синхронного кода
+2. Callback Queue - **очередь отложенных задач** асинхронного кода
+3. API среды (ПО где запущен JS: браузера или node.js)- сам движок например не содержит асинхронную функцию setTimout()
+
+```js
+console.log("Start algorithm!");
+setTimeout(function timeout() {
+console.log("This will be printed after 5 seconds!");
+}, 5000);
+console.log("End synchronous code.");
+```
+
+Первая строка синхроная, она попадает в Call Stack, выполняется стандартными механизмами и завершается.
+Вторая строка setTimeout() это асинхронная фукнция API браузера, она содержит каллбек фукнцию timeout(), которая через 5 секунд попадает в Callback Queue. (если бы была синхронная функция, то она бы попала в Call Stack и не была бы в очереди отложенных задач)
+
+Пока длятся 5 секунд, код продолжает выполнятся дальше выведя сообщение из 7 строки.
+Все это время цикл событий смотрит за стеком вызовов, если он пустой (т.е. нет синхронных задач) то он берет первую задачу из очереди отложенных асинхронных задач и помещает функцию timeout() в стек синхронных вызвов и из стека вызовов стандартный механизм выполняет и завершает timeout(). 
+
+Цикл событий тупо делает два действия: следит когда освободится стек и сразу бередь задачу из очереди и помещает в стек.
+
+При занятом долгой синхронной задачей и следовательно забытым ей стеке нет гарантии, что функция timeout() выполнится в течении 5 секунд. 
+
+Асинхронными делаются функции, которые чем-то могут быть заняты и не заблокируют основной поток, например:
+
+- доступ к БД
+- чение или запись файлв
+- оптарвка или получание данных по сети
+
+В вебе часто код для подгрузки картинок делают асинхронным, чтобы пользователю не дожидаясь были доступны текст и элементы упралвения.
+
+Встроенные функции и методы могут быть синхронными или асинхронными, а есть в двух исполнениях сразу.
+
+Циклы for, while - является синхронным, цикл while. Но, есть способ сделать код с такими операторами асинхронным
+
+#### AJAX
+
+Asynchronous JavaScript And XML (AJAX) - механизм, который позволяет обновлять страницу без перезагрузки: чаты, мессенджеры, уведомления и т.д.
+
+##### XMLHttpRequest
+
+Объект XMLHttpRequest позволяет создать объект запроса на сервер и ответа от него (через браузер как html-файл):
+
+```js
+// XHR GET запрос
+// Для создания запроса сначала нужно создать объект XMLHttpRequest, конструктор вызывается без аргументов.
+const xhr = new XMLHttpRequest();
+// Открываем запрос. Первый аргумент это метод (GET, POST ...), второй адрес, куда нужно отправить запрос. У данного метода есть еще аргументы, которые мы рассмотрим позже.
+xhr.open('GET', 'https://api.github.com/users/octocat');
+// Отправляем запрос на сервер. Метод send() может принимать один аргумент - это тело запроса, если оно есть. Для методов POST мы бы передавали тут тело запроса, наш запрос GET не имеет тела запроса.
+xhr.send();
+// После отправки запроса нам нужно использовать методы слушатели, которые будут асинхронно выполнены при наступлении соответствующего события. Это методы onload, onerror и onprogress - мы сами определяем их функции.
+// onload - будет вызван, когда сервер вернет ответ. Это может быть положительный ответ сервера с кодом 200 (все хорошо), так и ошибка, например страница не найдена, тогда код будет 404. Мы должны обрабатывать такие ситуации сами.
+xhr.onload = function() {
+    if (xhr.status != 200) { // если статус не 200, то произошла ошибка
+        console.log(`Error ${xhr.status}: ${xhr.statusText}`);
+    } else {
+        console.log(`user: ${xhr.response}`); // response - это ответ сервера
+    }
+};
+// onprogress - функция будет вызываться пока запрос находится в процессе, и позволяет отслеживать ход процесса отправки запроса и получения ответа от сервера. Бывает полезна при отладке сложных запросов.
+xhr.onprogress = function(event) {
+    console.log(`Get from server: ${event.loaded} bytes`);
+};
+// onerror - функция будет вызываться если в запросе пошло что-то не так. НАпример нет соединения с сервером или ошибка в адресе запроса.
+xhr.onerror = function() {
+    console.log("Request error");
+};
+// Вывод из функции onprogress.
+// Get from server: 1319 bytes
+// Вывод из функции onload, приведен не полностью.
+user: {`
+"login": "octocat",
+"id": 583231,
+"node_id": "MDQ6VXNlcjU4MzIzMQ==",
+"avatar_url":
+"https://avatars.githubusercontent.com/u/583231?v=4",
+"gravatar_id": "",
+"url": "https://api.github.com/users/octocat",
+"html_url": "https://github.com/octocat",
+"followers_url":
+"https://api.github.com/users/octocat/followers",
+"following_url":
+"https://api.github.com/users/octocat/following{/other_user}",
+...`
+}
+```
+
+С помощью node.js:
+
+```js
+const XMLHttpRequest = require('xhr2');
+
+const xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://api.github.com/users/strogino');
+xhr.send();
+
+xhr.onload = function() {
+  if (xhr.status !== 200) {
+    console.log(`Error ${xhr.status}: ${xhr.statusText}`);
+  } else {
+    console.log(`user: ${xhr.response}`);
+  }
+};
+
+xhr.onprogress = function(event) {
+  console.log(`Get from server: ${event.loaded} bytes`);
+};
+
+xhr.onerror = function() {
+  console.log("Request error");
+};
+```
+
+Объект XMLHttpRequest имеет ряд других полезных методов, но его применение с каждом годом становится менее актуальным, т.к. есть метод fetch.
+
+#### async/await
+
+Появился в ES8.
+
+**async** - превращает любую функцию в обещание и позволяет использвать await внутри нее.
+
+**await** - останавливает выполнение функции, пока она не вернет результат.
+
+```js
+const getUser = async (url) => {
+    // Делаем запрос, и ждем его результат (указание await), который будет сохранен в константу response.
+    const response = await fetch(url);
+    // Выполняем еще один асинхронный метод, преобразования в текст, также ждем результат, который сохраняется в константу пользователь.
+    const user = await response.text();
+    console.log(user);
+}
+getUser('https://api.github.com/users/octocat');
+// Вывод в консоль.
+// {
+// "login": "octocat",
+// "id": 583231,
+// ...
+// }
+```
+
+#### setTimout(), setInterval()
+
+Запланированная асинхроность - это когда нужно синхронный код превратить в асинхронный. Например, для имитации задержки ответа от сервера:
+
+```js
+let counter = 0; // объявляем переменную counter
+const amount = 100000; // объявляем переменную amount
+const timerId = setInterval(() => {
+    if (counter > amount) {
+    // После того как наш счетчик достигнет нужного количества итераций, мы должны очистить таймер, чтобы итерации больше не выполнялись.
+    clearInterval(timerId);
+        console.log('End long calculations');
+    }
+    // Добавим вывод нашего счетчика через каждые 10000 итераций, чтобы видеть что наш код работает.
+    if (counter % 10000 === 0) {
+        console.log('working: ', counter);
+    }
+    const newDate = new Date(counter);
+    counter++;
+}, 0);
+// Start long calculations
+// working: 0
+// working: 10000
+// working: 20000
+...
+// End long calculations
+```
+
+Вышеперечисленные функции помещают колбеки в очерь отоложенных задач, поэтому они становятся асинхронными
