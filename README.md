@@ -293,17 +293,15 @@ console.log(typeof bigNum); // bigint
 
 **Boolean** - это логический тип данных, который может иметь два значения: **true** и **false**.
 
-#### 5. Symbol
+#### 5. Symbols
 
-**Symbol** - это встроенный тип данных, который используется для создания уникальных идентификаторов. Даже при одинаковых значениях они будут различаться.
+**Symbol** - это встроенный примитивный неизменяемый тип данных (не объект), для создания уникальных идентификаторов, которые даже при одинаковых значениях будут различаться.
 
 ```js
 let id1 = Symbol("test");
 let id2 = Symbol("test");
 console.log(id1 === id2); // false
 ```
-
-Добавлен в ECMASCript 2015.
 
 #### 6. undefined
 
@@ -589,6 +587,8 @@ JS пишутся с большой буквы:
 - Boolean() - к булеву типу
 
 Могут быть использованы как обычные функции или [конструкторы](#конструктор-объекта) с оператором new.
+
+Есть встроенные функции-конструкторы: Object(), Array(), Number(), String(), Boolean(), Date(), RegExp(), Function(), Error(), Map(), Set(), WeakMap(), WeakSet()
 
 #### Именование функций
 
@@ -1596,6 +1596,8 @@ console.log(str.repeat(3)); // HelloHelloHello
 
 ### Объекты
 
+Объекты это абстрактные структуры данных (Выразительный JS. Глава 6), которые обладают набором интерфейсов (методов.) Это справедливо как для встроенных типво данных Массивы, Функции, так и для пользовательских объектов. 
+
 Правила создания объектов:
 
 1. Объекты объявляются с помощью ключевого слова **const**.
@@ -1793,6 +1795,13 @@ whiteRabbit.speak("oh my fur and whiskers")
 // The white rabbit says: oh my fur and whiskers
 hungryRabbit.speak("got any carrots?");
 // The hungry rabbit says: got any carrots?
+```
+
+Для наглядности вызова метода, можно использовать встроенный в функции метод call:
+
+```js
+speak.call(whiteRabbit, "Hurry");
+// → The white rabbit says 'Hurry'
 ```
 
 В объекте принято методы объявлять после свойств:
@@ -2848,6 +2857,15 @@ setTimeOut(Roomba.switchUVLamp, 5000);
 
 Все схоже с объектом, только добавился конструктор, свойства внутри присваиваются через равно и методы объявляются по другому. Но, ультрафиолетовая лампа не выключается, т.к. setTimOut запускает выключатель лампы через 5 секунд когда контекст методов класса исчезает и this начинает ссылаться на глобальный объект.
 
+Ключевое слово class, можно использовать в качестве инструкции создания именованного класса, либо  как анонимного классового выражения:
+
+```js
+let object = new class { getWord() { return "hello"; } };
+console.log(object.getWord()); // → hello
+```
+
+Анонимное классовое выражение возвращает конструктор, который в свою очередь с помощью ключевого слова new создает объект.
+
 #### bind()
 
 Используя стандартный метод объектов bind можно сохранить контекст.
@@ -3403,14 +3421,14 @@ ages.Julia = 62;
 - Нет свойства size, т.е. кол-во элементов объекта нужно считать вручную.
 
 
-Поетому в ES2015 добавили класс Map(), который имеет преемущества перед объектом:
+Поетому в ES2015 добавили конструктор Map(), который имеет преемущества перед объектом:
 
 - Нет по умолчнию ни ключей ни методов
 - Ключи могут быть любыми, включая цифры
 - Имеется свойство size
 - Можно итерироваться с помощью for/of или forEach()
 
-Класс Map() - структура данных ассициированных пар ключ-значение. Ключи уникальны, а значения могут повторяться.
+Конструктор Map(), предназначены для создания структуры данных ассициированных пар ключ-значение. Ключи уникальны, а значения могут повторяться.
 
 ```js
 let ages = new Map();
@@ -3421,7 +3439,7 @@ ages.set("Eddie", 10);
 console.log(ages.has("toString")); //false
 ```
 
-Map() имеет следующие методы:
+Объекты Map() имеют следующие методы:
 
 - set(key, value)
 - get(key)
@@ -3475,6 +3493,8 @@ console.log(String(user)); // John is 30 years old
 
 ### Геттеры и сеттеры
 
+Каждый раз при использовании точечной нотации при обращении к свойству объекта под капотом используюется геттеры и сеттеры.
+
 Геттеры и сеттеры в JavaScript — это специальные методы доступа к свойствам объекта, которые позволяют перехватывать чтение и запись значений.
 
 ```js
@@ -3522,15 +3542,79 @@ const utils = new MathUtils();
 console.log(utils.square);  // undefined (это НЕ метод экземпляра)
 ```
 
-### Symbol()
-
-Появилась в 2015. В отличие от строки Symbol() всегда уникальный, нельзя создать два одинаковых объекта Symbol():
+Пример использования статического метода в производстве:
 
 ```js
-let id1 = Symbol("test");
-let id2 = Symbol("test");
-console.log(id1 === id2); // false
-console.log(id1.description, id2.description) // test test
+class Car {
+    constructor(make, model) {
+        this.make = make;
+        this.model = model;
+    }
+
+    static createFromLicensePlate(licensePlate) {
+        const make = licensePlate.slice(0, 2);
+        const model = licensePlate.slice(2);
+        return new Car(make, model);
+    }
+}
+
+const ford = Car.createFromLicensePlate('AB123CD');
+```
+
+Статический метод createFromLicensePlate() используется для создания экземпляра класса Car из лицензионного номера автомобиля. Он не используется позже с объектом ford.
+
+#### Singleton
+
+Синглтон (Singleton) - это паттерн проектирования, который гарантирует, что класс может иметь только один экземпляр. В JavaScript синглтон можно реализовать с помощью класса и статического метода, который возвращает единственный экземпляр класса.
+
+```js
+class Singleton {
+  static instance;
+
+  constructor() {
+    if (!Singleton.instance) {
+      Singleton.instance = this;
+    }
+    return Singleton.instance;
+  }
+
+  someMethod() {
+    console.log('Это метод синглтона');
+  }
+}
+
+const singleton1 = new Singleton();
+const singleton2 = new Singleton();
+
+console.log(singleton1 === singleton2); // true
+```
+
+При попытке создать несколько экземпляров класса Singleton, мы получаем всегда один и тот же экземпляр, что полезоно для:
+
+- Хранения глобальных переменных в одном месте
+- Логирования всех ошибок в одном месте
+- Хранения конфигурации в одном месте
+- Централизованного кэширования
+- Упрощения тестирования, где все зависимости в одном месте 
+
+### Symbol()
+
+Symbol() всегда уникальный, нельзя создать два одинаковых Symbol(). В ES6 был добавлен для решения проблем:
+
+- Дублирующихся имен ключей внутри объектов, с помощью symbol можно задавать ключи с одинаковыми именами
+- Для создания приватных свойств внутри объектов, symbols не отображаются в Object.keys() и for/in циклах:
+
+```js
+const test = Symbol('test');
+
+const obj = {
+    [test]: 'testValue'
+}
+
+console.log(Object.keys(obj)); // []
+console.log(Object.getOwnPropertySymbols(obj)); //[ Symbol(test) ] 
+console.log(Reflect.ownKeys(obj)); // [ Symbol(test) ] 
+console.log(obj[test]); // testValue 
 ```
 
 Возможно добавление символьного свойства в объект или класс обрамив свойство квадратными скобками, как при использовании скобочной нотации при вызове свойств объекта:
@@ -3546,10 +3630,30 @@ const myTrip = {
 console.log(myTrip[length], myTrip.length); // 21500 2
 ```
 
+Через Symbol можно задавать свойства прототипам:
+
+```js
+const mySymbol = Symbol('mySymbol');
+
+Array.prototype[mySymbol] = function () {
+    console.log('This function added to the Arrays prototype');
+}
+
+const myArray = [1, 2, 3];
+myArray[mySymbol](); // This function added to the Arrays prototype
+```
+
+Недостатки symbols:
+
+- Не достаточно распространен
+- Нельзя изменить после создания
+- Одинаково названные symbols могут запутать
+- Не удаляются сборщиком мусора, в отличие от других примитивов
+
 ### Интерфейс iterator
 
-Цикл for/of ожидает итерируемого объекта, имеющего символьный метод Symbol.iterator (символьно значение определенное самим языком, хранящееся в функции Symbol).
-Когда метод вызван он должен вернуть объект предоставляющий второй интерфейс **итератор**, вот эта штука и занимается итеррированием. Объект имеет метод **next**, который возвращает следующий результат, который тоже объект имеющий свойство **value**, которое в свкою очередь будет иметь следующее значение, в случае наличия или свойство **done** имеющее значение true, указывающее что итерация завершена.
+Добавленный в ES6 цикл for/of ожидает итерируемого объекта, имеющего символьный метод `[Symbol.iterator]()` (символьное значение определенное самим языком, хранящееся в функции Symbol).
+Когда метод вызван он должен вернуть объект предоставляющий второй интерфейс **итератор**, вот эта штука и занимается итеррированием. Объект имеет метод **next()**, который возвращает следующий результат, который тоже объект имеющий свойство **value**, которое в свкою очередь будет иметь следующее значение, в случае наличия или свойство **done** имеющее значение true, указывающее что итерация завершена.
 Свойства объекта **next**, **value** и **done** являются строками, не символьным типом. Только Symbol.iterator, который предполагается будет добавлен в большниство объектов, является символьным типом данных:
 
 ```js
@@ -3623,11 +3727,70 @@ for(let element of list){
 // 3
 ```
 
-Синтаксический сахар ... работает с любым итеррируемым объектом, позволяя превратить его в обычный массив:
+Пример реализации итератора внутри объекта:
+
+```js
+const myIterable = {
+  data: [1, 2, 3, 4],
+
+  [Symbol.iterator]: function () {
+    let index = 0;
+    return {
+      next: () => {
+      if(index < this.data.length){
+        return { value: this.data[index++], done: false };
+        } else {
+        return { done: true };
+        }
+      }
+    }
+  }
+}
+
+for(el of myIterable){
+    console.log(el);   // 1 2 3 4
+}
+```
+
+Блягодаря наличию `[Symbol.iterator]()` cинтаксический сахар ... (rest оператор упаковки в массив) работает с любым итеррируемым объектом, позволяя превратить его в обычный массив:
 
 ```js
 console.log([..."PCI"]); // ["P", "C", "I"]
 ```
+
+Плюсы интерфейса (т.е. публичного метода) iterator:
+
+- Итерация по любым объектам
+- Итерация в соответствии с заданной логикой
+- Инкапсуляция - спрятаны детали структуры данных, поэтому итерирооваться можно незная фнутренней организации данного объекта
+
+### Генераторы
+
+Использование генераторов для создания итераторов упрощает код:
+
+```js
+class Range{
+    constructor(start, end){
+        this.start = start;
+        this.end = end;
+    }
+    *[Symbol.iterator](){
+        for(let i = this.start; i <= this.end; i++){
+            yield i;
+        }
+    }
+}
+
+const myRange = new Range(1, 5);
+
+for (const num of myRange){
+    console.log(num);
+}
+```
+
+Обратите внимание на добавление * перед [Symbol.iterator], что указывает на то, что метод является генератором.
+
+Функция генератор последовательно возвращает итератор, который неявно содержит свойства value и done.
 
 ## Наследование
 
@@ -3648,11 +3811,101 @@ class LengthList extends List{
 console.log(LenghtList.fromArray([1, 2, 3]).length); // 3
 ```
 
-Наследование фундаментальная часть ООП, так же как и инкапсуляция или полиморфизм, но в отличи от них, которы упрощяют и прячут подробности, наследование усложняет и делает больше взаимосвязей. Т.к. чтобы понять подкласс, нужно знать друге классы от которых он произошел.
+Наследование фундаментальная часть ООП, так же как и инкапсуляция или полиморфизм, но в отличии от них, которые упрощяют и прячут подробности, наследование усложняет и делает больше взаимосвязей. Т.к. чтобы понять подкласс, нужно знать друге классы от которых он произошел.
+
+Наследования объектов можно добится следующими способами:
+
+- Object.create
+- с помощью конструктора
+- ключевого слова extends
+
+### Object.create()
+
+Добиваемся наследования через цепочку прототипов:
+
+```js
+const animalPrototype = {
+    makeSound: function(){
+        console.log('Generic Animal sound');
+    }
+};
+
+const birdPrototype = Object.create(animalPrototype);
+birdPrototype.fly = function(){
+    console.log('The bird is flying');
+};
+
+const myBird = Object.create(birdPrototype);
+myBird.name = "Sparrow";
+console.log(myBird.name); // Sparrow
+myBird.fly(); // The bird is flying
+myBird.makeSound(); // Generic Animal sound
+
+birdPrototype.makeSound = function () {
+    console.log('Tweet, tweet!');
+}
+```
+
+### Функция конструктор
+
+```js
+function Animal(name) {
+    this.name = name;
+}
+// добавили метод к прототипу конструктора Animal
+Animal.prototype.makeSound = function(){
+    console.log('Generic Animal Sound');
+};
+// создали дочерний класс Bird
+function Bird(name, wingspan){
+    Animal.call(this, name); // унаследуем свойства от конструктора Animal, передав this
+    this.wingspan = wingspan; // передадим спицифичные для птицы свойства
+}
+
+Bird.prototype = Object.create(Animal.prototype);
+Bird.prototype.fly = function(){
+    console.log('The bird is flying');
+}
+
+const myBird = new Bird('Sparrow', '20 cm');
+console.log(myBird.name); // Sparrow
+console.log(myBird.wingspan); // 20 cm
+myBird.fly(); // The bird is flying
+myBird.makeSound(); // Generic Animal sound
+```
 
 ### class extends
 
 Заменим предыдущий код современным способом, создадим родителя:
+
+```js
+class Animal{
+    constructor(name){
+        this.name = name;
+    }
+    makeSound(){
+        console.log('Generic Animal Sound');
+    }
+}
+
+class Bird extends Animal{
+    constructor(name, wingspan){
+        super(name);
+        this.wingspan = wingspan;
+    }
+    fly(){
+        console.log('The bird is flying');
+    }
+}
+
+const myBird = new Bird('Sparrow', '20 cm');
+console.log(myBird.name); // Sparrow
+console.log(myBird.wingspan); // 20 cm
+myBird.fly(); // The bird is flying
+myBird.makeSound(); // Generic Animal sound
+```
+
+На примере пылесосов:
 
 ```js
 // Класс робот-пылесос.
@@ -3741,10 +3994,16 @@ console.log(DancingSeries.prototype); // VacuumCleaner {constructor: ƒ, switchU
 Чтоб знать от какого класса произошел объект, используется оператор бинарный instanceof:
 
 ```js
-console.log(new Length(1, null) instanceof LengthList); // true
-console.log(new Length(1, null) instanceof List); // true
-console.log(new Length(1, null) instanceof Object); // true
-console.log([1] instanceof Array); //true
+function Car(make, model){
+    this.make = make;
+    this.model = model;
+}
+
+var myCar = new Car('Toyota', 'Camry');
+
+console.log(myCar instanceof Car); // true
+console.log(myCar instanceof Object); // true
+console.log(myCar instanceof Array); // false
 ```
 
 ### 04.Lecture
