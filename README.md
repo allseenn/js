@@ -5080,6 +5080,7 @@ const timerId = setInterval(() => {
 - запрещает использование переменной arguments внутри функций
 - запрещает использование оператора with
 - запрещено использование eval()
+- 
 
 ```js
 function canYouSpotTheProblem() {
@@ -5097,7 +5098,7 @@ canYouSpotTheProblem();
 
 По умолчанию строгий режим включен в классах и модулях.
 
-Строгий режим c функциями если они вызываются не как методы присвоит this undefined:
+Строгий режим c функциями если они вызываются не как методы (или без new) присвоит this undefined:
 
 ```js
 "use strict";
@@ -5109,7 +5110,7 @@ let ferdinand = Person("Ferdinand"); // forgot new
 Без `"use strict"` this будет ссылаться на глобальную область видимости, т.е. `this` будет `window` в браузере.
 
 ```js
-function Person(name) { this.name = name; }
+function Person(name) { this.name = name; } 
 let ferdinand = Person("Ferdinand"); // oops
 console.log(name);
 // → Ferdinand
