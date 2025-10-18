@@ -5469,6 +5469,24 @@ let promise = new Promise(function(resolve, reject) {
     - value (результат resolve)
     - error (результат reject)
 
+Данные слоты можно увидеть в браузере chrome введат в консоли либо promise либо console.log(promise):
+
+```js
+Promise {<fulfilled>: 42}
+  [[Prototype]]: Promise
+  [[PromiseState]]: "fulfilled"  
+  [[PromiseResult]]: 42         
+```
+
+В браузере firefox из-за раличий в движках внутрение слоты представлены внутренними свойствами state и value:
+
+```js
+Promise { <state>: "fulfilled", <value>: undefined }
+  <state>: "fulfilled"
+  <value>: undefined
+  <prototype>: Promise.prototype { … }
+```
+
 resolve и reject в теле промиса могут быть вызваны только один раз. Они принимают по одному аргументу (число, булево значение, строка или объект)
 
 Создадим промис с задержкой помощью функции таймаута:
@@ -5599,9 +5617,25 @@ promise.then(
 
 ##### Статические методы промисов
 
-Методы которые не принадлжета экземплярам (объектам) на основе Promise, а относятся к самому классу Promise
+Методы которые не принадлжета экземплярам (объектам) на основе Promise, а относятся к самому классу Promise. 
+Данные методы позволяют выполнить переденнаые в них в качестве параметров асинхронные операции параллельно.
+Для передачи промисов в методы необходимо передать их в виде массива (или другого итерируемого объекта):
+
+```js
+[Promise, Promise, Promise]
+```
+
+Данные методы методы всегда возвращают новый промис, где через метод then можно применить коллбеки-обработчики и получить результаты асинхронных операций.
 
 ##### all
+
+```js
+const promise = Promise.all([
+    new Promise(resolve => setTimeout(() => resolve(1), 1000)),
+    new Promise(resolve => setTimeout(() => resolve(2), 2000)),
+    new Promise(resolve => setTimeout(() => resolve(3), 3000)),
+]).then(console.log);
+```
 
 ##### allSettled
 
