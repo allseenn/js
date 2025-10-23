@@ -1,0 +1,44 @@
+БРАУЗЕР
+    ├── ДВИЖОК JS
+    │       └── Парсер
+    │       └── Интерпретатор
+    │       └── Компилятор
+    │       └── Сall stack
+    │       └── Heap
+    │       └── Garbage collector
+    │
+    └── СРЕДА:
+        ├── ПРОЦЕССОРЫ
+        │    └── Rendering processor
+        │       └── Rendering queue
+        │    └── DOM processor
+        │       └── DOM queue
+        │    └── CSS processor
+        │       └── CSS queue
+        │    └── Audio processor
+        │       └── Audio queue
+        │    └── Video processor
+        │       └── Video queue
+        │    └── WebAssembly processor
+        │       └── WebAssembly queue
+        │    └── other processors
+        └── API
+        │   └── DOM API
+        │   └── CSS API
+        │   └── Canvas API
+        │   └── Crypto API
+        │   └── Network API
+        │   └── other APIs
+        └──МЕХАНИЗМЫ
+            └── Event Loop
+            └── Callback Queue
+            └── Microtask Queue
+            └── CORS (cross origin resource sharing)
+            └── SOP (same origin policy)
+            └── CSP (content security policy)
+            └── SS (sandbox security)
+            └── Cache Management
+            └── Cookie Management
+            └── other mechanisms
+
+
