@@ -5458,7 +5458,7 @@ console.log("This will be printed after 5 seconds!");
 console.log("End synchronous code.");
 ```
 
-1. Первая строка синхроная функция, она попадает в Call Stack, 
+1. Первая строка синхроная функция, она попадает в Call Stack.
 2. Т.к. функция единственная в Call Stack, она выполняется JS-движком и в консоле видим "Start algorithm!"
 3. Вторая строка setTimeout() это асинхронная фукнция, после того как она попала в стек, выполняет синхронную часть при наличии
 4. setTimeout() дождавшись своей очереди идет на выполенине API браузера.
@@ -5470,7 +5470,6 @@ console.log("End synchronous code.");
 10. Event Loop ожидает освобождение очереди микротасков
 11. Event loop помещает коллбек в Call Stack
 12. Происходит выполенние коллбека и в консоле видим "This will be printed after 5 seconds!"
-
 
 Как видно из примера выше асинхронные операции не выполняются синхронно, т.е. последовательно. В коде сначала в любой случае выполнятся все синхронные фукнции, даже если setTimeout() выставлен в 0. Поэтому для последоваетльной работы с асинхронным кодом нужно делать код вложенным.
 
@@ -6605,11 +6604,11 @@ console.log(/boo+(hoo+)+/i.test("Boohooohoohooo")); // true
 
 где, `i` - это игнорирование регистра.
 Первый и второй плюсы выражения относятся только к букве `o`.
-Третий плюс к (hoo+) целиком, поэтому данному раблону соотвествует 3 `hoo` подряд.
+Третий плюс к (hoo+) целиком, поэтому данному шаблону соотвествует 3 `hoo` подряд.
 
 (hoo+) выражение в скобках - называют **группой захвата**
 
-### Совпадения
+### String.match
 
 Метод регулярного выражения [`exec`](#exec) имеет аналог в строчном методе [`match`]:
 
@@ -6617,7 +6616,7 @@ console.log(/boo+(hoo+)+/i.test("Boohooohoohooo")); // true
 console.log("one two 100".match(/\d+/)); // [ '100', index: 8, input: 'one two 100', groups: undefined ]
 ```
 
-У возвращаемого объекта:
+У возвращаемого объекта (псевдомассива):
 
 1. первым всегда идет полное совпадение регулярного выражения
    - может содержать не полные совпадения
@@ -6662,7 +6661,7 @@ console.log(/bad(ly)?/.exec("badly")); // [ 'badly', 'ly', index: 0, input: 'bad
 console.log(/(?:na)+/.exec("banana")); // [ 'nana', index: 2, input: 'banana', groups: undefined ]
 ```
 
-## Класс даты
+## Класс Date
 
 Объект на основе класса `Date` хранить много свойств и методов: getFullYear(), getMonth(), getDate(), getHours().
 
@@ -6677,9 +6676,9 @@ console.log(new Date); // 2025-09-23T18:43:36.596Z
 Дата в формате ГОД-МЕСЯЦ-ДЕНЬ T ЧАСЫ:МИНУТЫ:СЕКУНДЫ.МИЛЛИСЕКУНДЫ Z, где:
 
 - `T` означает Time и является разделителем между датой и временем
-- `Z` означает Zero, т.е. смещение 0 часов от UTC
+- `Z` означает Zero, т.е. смещение 0 часов от UTC, либо указываем смещение в формате ±HH:mm
 
-JS использует архаизм пришедший из JAVA, в котором первый месяц это ноль 0, следовательно декабрь - 11 месяц. Но, числа начинаются с единицы 1.
+JS использует архаизм пришедший из JAVA, в котором первый месяц это ноль 0, следовательно декабрь - 11 месяц. Но, числа и года начинаются с единицы 1.
 
 Для создания объекта с конкретной датой используют минимум 3 обязательных параметра (год, месяц, день):
 
@@ -6705,7 +6704,9 @@ console.log(timestamp); // 1758653203717
 console.log(new Date(1387407600000)); // 2013-12-18T23:00:00.000Z
 ```
 
-### Дата и регулярка
+### Методы Date
+
+#### getDate()
 
 ```js
 function getDate(string) {
@@ -6722,6 +6723,93 @@ console.log(getDate("1-30-2003"));
 В этом объекте нужны только свойства 1, 2, 3. Нулево свойства, т.е. полное совпадение не нужно, оно попадает в переменную `_`.
 
 Создаем на основе распарсенных данных объекта `Date` с переданной датой в него в парвильном формате датой.
+
+#### getDay()
+
+```js
+function getDay(date) {
+  let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  return days[date.getDay()];
+}
+console.log(getDay(new Date("2013-12-18"))); // Sun
+```
+
+#### getMonth()
+
+```js
+function getMonth(date) {
+  let months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ];
+  return months[date.getMonth()];
+}
+console.log(getMonth(new Date("2013-12-18"))); // Dec
+```
+
+#### getFullYear()
+
+```js
+function getFullYear(date) {
+  return date.getFullYear();
+}
+console.log(getFullYear(new Date("2013-12-18"))); // 2013
+```
+
+#### getYear()
+
+Вовзращает короткий год минус 1900:
+
+- для 1913 вернет 13
+- для 2013 вернет 113
+
+Данный метод сегодня является бесполезным.
+
+#### getHours()
+
+```js
+function getHours(date) {
+  return date.getHours();
+}
+console.log(getHours(new Date("2013-12-18"))); // 20
+```
+
+#### getMinutes()
+
+```js
+function getMinutes(date) {
+  return date.getMinutes();
+}
+console.log(getMinutes(new Date("2013-12-18"))); // 0
+```
+
+#### getSeconds()
+
+```js
+function getSeconds(date) {
+  return date.getSeconds();
+}
+console.log(getSeconds(new Date("2013-12-18"))); // 0
+```
+
+#### getMilliseconds()
+
+```js
+function getMilliseconds(date) {
+  return date.getMilliseconds();
+}
+console.log(getMilliseconds(new Date("2013-12-18"))); // 0
+```
 
 ### Границы (якоря)
 
