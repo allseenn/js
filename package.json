@@ -1,5 +1,8 @@
 {
   "name": "my-project",
   "type": "module",
-  "main": "index.mjs"
+  "main": "index.mjs",
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
 }

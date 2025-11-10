@@ -7278,6 +7278,52 @@ text.split(/\r?\n/)
 
 ### .env
 
+Универсального способа импорта текстовых файлов и в частности .env файлов в разных средах нет
+
+Например для быстрой краткой загрузки .env-файла в Node.js используют пакет `dotenv`:
+
+```js
+import dotenv from 'dotenv';
+console.log(dotenv.config().parsed);
+```
+
+К сожелению пока fetch в nodejs не поддерживает загрузку из файла в отличие от браузера. Зато браузеры не поддерживают пакет dotenv.
+Можно применить условный импорт, в зависимости от окружения:
+
+```js
+const env = typeof window === 'undefined' 
+  ? (await import('dotenv')).default.config().parsed
+  : await (async () => {
+      const response = await fetch('.env');
+      const text = await response.text();
+      return Object.fromEntries(text.split('\n').map(line => line.split('=')));
+    })();
+console.log(env);
+```
+
+В данном коде есть проблема строк с комендариями они пойдут либо в значение или назнвание переменной. Использую регулярное выражение можно отсетить коментарии:
+
+```js
+const env = typeof window === 'undefined' 
+  ? (await import('dotenv')).default.config().parsed
+  : await (async () => {
+      const response = await fetch('.env');
+      const text = await response.text();
+      return Object.fromEntries(
+        text
+          .split('\n')
+          .map(line => line.replace(/\s*#.*$/, '').trim()) // Удаляем комментарии RE
+          .filter(line => line && /=/.test(line)) // Только непустые строки с =
+          .map(line => {
+            const [key, ...values] = line.split('=');
+            return [key.trim(), values.join('=').trim()];
+          })
+      );
+    })();
+
+console.log(env);
+```
+
 ### Кодовые единицы в регулярных выражениях
 
 Операторы подобные `.` и `?` работают с кодовыми единицами, но не с сурогатными парами:
