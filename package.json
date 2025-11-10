@@ -1,0 +1,5 @@
+{
+  "name": "my-project",
+  "type": "module",
+  "main": "index.mjs"
+}
