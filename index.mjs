@@ -1,13 +1,14 @@
-//import dotenv from 'dotenv';
-//console.log(dotenv.config().parsed);
-// env-loader.js
-const env = typeof window === 'undefined' 
-  ? (await import('dotenv')).default.config().parsed
-  : await (async () => {
-      const response = await fetch('.env');
-      const text = await response.text();
-      return Object.fromEntries(text.split('\n').map(line => line.split('=')));
-    })();
+class Thenable {
+  constructor(num) {
+    this.num = num;
+  }
+  then(resolve) {
+    setTimeout(() => resolve(this.num + 1), 1000);
+  }
+}
 
-console.log(env);
+new Promise(resolve => resolve(1))
+  .then(result => new Thenable(result))      // (1)
+  .then(result => new Thenable(result))      // (2)
+  .then(console.log);                       // (3)
 
