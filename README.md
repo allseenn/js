@@ -8208,3 +8208,56 @@ document.querySelectorAll('div > .class') // возвращает статиче
 ```js
 document.querySelector('div > .class')
 ```
+
+### Изменение элементов
+
+#### innerHTML
+
+Изменяет содержимое конкретного элемента, включае текст, теги, атрибуты
+
+```js
+document.querySelector('.title').innerHTML = "Hello"
+```
+
+#### outerHTML
+
+Заменяет полностью элемент
+
+```js
+document.querySelector('.title').outerHTML = '<h1>hi</h1>'
+```
+
+Если изменить таким образом элемент и вызвать console.log, то выведется старый объект, если же этот новый объект присвоить переменной:
+
+```js
+const title = document.querySelector('.title');
+title.outerHTML = '<h1>hi</h1>';
+console.log(title);
+```
+
+То, теперь-то выведтся ноый объект.
+
+Поэтому стараются не использовать innerHTML, а outerHTML для изменения содержимого, для этого используют `textContent`:
+
+```js
+document.querySelector('.title').textContent = "hello world"
+```
+
+### Создание элементов
+
+```js
+const newElement = document.createElement('a');
+newElement.href = 'https://google.com';
+newElement.setAttribute('target', '_blank');
+newElement.textContent = 'Google';
+console.log(newElement);
+```
+
+### Вставка элементов
+
+1. before - Перед элементом
+2. after -После элемента
+3. prepend - В начало содежримого элемента
+4. append В конец содержимого элемента
+
+```js
