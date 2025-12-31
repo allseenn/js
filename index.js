@@ -1,35 +1,15 @@
-const fs = require('fs');
-// Простейший alert (синхронный)
-function alert(message) {
-  console.log(`❗ ${message}`);
+const user1 = { name: { first: "Иван", last: "Иванов" }, age: [32, 1] };
+const user2 = { name: { first: "Иван", last: "Иванов" }, age: [32, 1] };
+
+function compare(obj1, obj2){
+    if(Object.keys(obj1).length !== Object.keys(obj2).length) return false
+    for(let key in obj1){
+        if(typeof obj1[key] == 'object'){
+            if(!compare(obj1[key], obj2[key])) return false
+        }
+        else if(obj1[key] !== obj2[key]) return false
+    }
+    return true
 }
 
-// Простейший prompt (синхронный)
-function prompt(question) {
-  // Создаем буфер для ввода
-  const buffer = Buffer.alloc(1024);
-  
-  // Выводим вопрос
-  process.stdout.write(`${question} `);
-  
-  // Синхронное чтение с stdin
-  const length = fs.readSync(0, buffer, 0, 1024);
-  
-  // Возвращаем введенную строку (без переноса строки)
-  return buffer.toString('utf8', 0, length - 1);
-}
-
-// Простейший confirm (синхронный)
-function confirm(question) {
-  const answer = prompt(`${question} (y/N)`);
-  return answer.toLowerCase() === 'y' || answer.toLowerCase() === 'yes';
-}
-
-// Пример использования
-alert('Внимание! Это важное сообщение');
-
-const name = prompt('Как вас зовут?');
-alert(`Привет, ${name}!`);
-
-const isReady = confirm('Вы готовы начать?');
-alert(isReady ? 'Отлично!' : 'Жаль...');
+console.log(compare(user1, user2))
