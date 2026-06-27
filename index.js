@@ -1,4 +1,4 @@
-const user1 = { name: { first: "Иван", last: "Иванов" }, age: [32, 1] };
+const user1 = { name: { first: "Иван", last: "Иванов" }, age: [32, 11] };
 const user2 = { name: { first: "Иван", last: "Иванов" }, age: [32, 1] };
 
 function compare(obj1, obj2){
